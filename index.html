@@ -85,7 +85,7 @@ Below you will find a picture of how the couties are divided up in 2020. Each ye
 
 <h2 >The Structure</h2>
 
-The data orinigated in an excel file where each year was on a different sheet. There were over 5000 variables across 14 years. Here is how the data was downloaded.
+The data orinigated in an excel file where each year was on a different sheet. There were over 5000 variables across 14 years.
 	
 <pre><code>
 #read in each file as a new DF
@@ -108,7 +108,9 @@ yr2020 = pd.read_excel(xls, years[13])
 yr2021 = pd.read_excel(xls, years[14])
 </code></pre>
 
-When the data is first loaded in, it is very messy. Here is the data cleaning. I added a year column and changed the structure of the data so that the varibales are not all their own column but rather in a row as a description. 
+<h2 >The Analysis</h2>	
+	
+When the data is first loaded in, it is very messy and difficult to work with. I added a year column and changed the structure of the data so that the varibales are not all their own column but rather in a row as a description. 
 
 <pre><code>
 #adding the year column
@@ -118,7 +120,8 @@ for i in range(len(sheets)):
 #concatinating the data
 oregonstacked = yr2007[(yr2007['CoC Number'] > 'OR-000') & (yr2007['CoC Number'] < 'PA')]
 for i in range(1, len(sheets)):
-    oregonstacked = pd.concat([oregonstacked, sheets[i][(sheets[i]['CoC Number'] > 'OR-000') & (sheets[i]['CoC Number'] < 'PA')]])
+    oregonstacked = pd.concat([oregonstacked, sheets[i][(sheets[i]['CoC Number'] 
+    > 'OR-000') & (sheets[i]['CoC Number'] < 'PA')]])
     
 # simplifing the dataset to not include ES or TH shelterd home 
 oregoncut = oregonstacked
@@ -164,3 +167,55 @@ Here is how the head of the data changed after cleaning.
 
 </center>
 
+<h2 >The Visualizaiton</h2>	
+
+There are thousands more way to look at homelessness data but here are a few that I found intersting. 
+<pre><code>
+import plotly.express as px
+
+# Filters data for variable we want 
+OVH = OR[OR["Description"]=="Overall Homeless"]
+
+# Creates this amazing timeseries of our data 
+fig = px.line(OVH, x="Year", y="Count", color = "CoC Name")
+fig.update_layout(title="Total Homeless in Oregon")
+fig.update_layout({"plot_bgcolor": "rgba(0, 0, 0, 0)", "paper_bgcolor": "rgba(0, 0, 0, 0)"})
+fig.update_layout(
+    font_color="#00bfb2",
+    title_font_color="#00bfb2",
+    legend_title_font_color="#00bfb2")
+fig.show()
+</code></pre>
+
+<center>
+<img src=".png" height=400px>
+</center>
+
+<pre><code>
+# Filtering for Overall homelessness in Oregon by Gender 
+FMG = OR[(OR["Description"]=="Overall Homeless - Female") | (OR["Description"]=="Overall Homeless - Male")
+        |(OR["Description"]=="Overall Homeless - Gender Non-Conforming")]
+FMG= FMG.groupby(by=["Description", "Year"], group_keys=True, as_index=False)["Count"].sum()
+FMG=pd.DataFrame(FMG)
+# creating the graph 
+fig = px.line(FMG, x="Year", y="Count", color = "Description")
+fig.update_layout(title="Total Homeless in Oregon by Gender")
+fig.update_layout({"plot_bgcolor": "rgba(0, 0, 0, 0)", "paper_bgcolor": "rgba(0, 0, 0, 0)"})
+fig.update_layout(
+    font_color="#00bfb2",
+    title_font_color="#00bfb2",
+    legend_title_font_color="#00bfb2")
+fig.show()
+</code></pre>
+
+<center>
+<img src=".png" height=400px>
+</center>
+
+<h2 >To Vinny</h2>	
+
+This dataset could've used some optimization, especially when first reading each excel sheet in (it took about a minute to load). However, the data took so long to clean, I just wanted to start creating graphics. Per usual for a Data Scientists.  
+
+Overall, I wanted to let you know I really enjoyed your class and have learned a lot! This has been one of my favorite classes and I appreciate all the work you put into making classes fun. 
+
+<3 Paulina 
