@@ -63,7 +63,7 @@
 <h1 id="preamble">Data Stuctures Final</h1>
 <p>By Paulina Konev. </p>
 
-<p>I wanted to look at homelessness in Oregon and specifically in Salem. </p>
+<p>I wanted to look at homelessness data specifiaclly in Oregon. </p>
 
 <center>
 <img src="Overallhomeless.png.png" height=500px>
@@ -137,7 +137,8 @@ OR.set_index(["CoC Name", "CoC Number","Year"], inplace= True)
 OR = OR.stack().reset_index()
 # changes the new column names to be useful desctiptors 
 OR.columns= ["CoC Name", "CoC Number", "Year", "Description","Count"]
-# Gets rid of the last 6 characters in the Desription column so that Descriptions can be compared easily through the years
+# Gets rid of the last 6 characters in the Desription column so that Descriptions 
+can be compared easily through the years
 OR['Description'] = OR["Description"].map(lambda x: str(x)[:-6])    
 
 # A few rows in 2021 data are giving description in Count column 
@@ -186,14 +187,17 @@ fig.show()</code></pre>
 </center>
 
 <pre><code># Filtering for Overall homelessness in Oregon by Gender 
-FMG = OR[(OR["Description"]=="Overall Homeless - Female") | (OR["Description"]=="Overall Homeless - Male")
+FMG = OR[(OR["Description"]=="Overall Homeless - Female") 
+	| (OR["Description"]=="Overall Homeless - Male")
         |(OR["Description"]=="Overall Homeless - Gender Non-Conforming")]
-FMG= FMG.groupby(by=["Description", "Year"], group_keys=True, as_index=False)["Count"].sum()
+FMG= FMG.groupby(by=["Description", "Year"], group_keys=True, 
+	as_index=False)["Count"].sum()
 FMG=pd.DataFrame(FMG)
 # creating the graph 
 fig = px.line(FMG, x="Year", y="Count", color = "Description")
 fig.update_layout(title="Total Homeless in Oregon by Gender")
-fig.update_layout({"plot_bgcolor": "rgba(0, 0, 0, 0)", "paper_bgcolor": "rgba(0, 0, 0, 0)"})
+fig.update_layout({"plot_bgcolor": "rgba(0, 0, 0, 0)", "paper_bgcolor": 
+	"rgba(0, 0, 0, 0)"})
 fig.update_layout(
     font_color="#00bfb2",
     title_font_color="#00bfb2",
