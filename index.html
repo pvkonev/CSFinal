@@ -83,7 +83,84 @@ Below you will find a picture of how the couties are divided up in 2020. Each ye
 <img src="2020juristiction_map.png" height=400px>
 </center>
 
+<h2 >The Structure</h2>
+
+The data orinigated in an excel file where each year was on a different sheet. There were over 5000 variables across 14 years. Here is how the data was downloaded.
 	
-	
-	
-	
+<pre><code>
+#read in each file as a new DF
+xls = pd.ExcelFile('2007-2021-PIT-Counts-by-CoC.xlsx')
+years = [str(i) for i in range(2007, 2022)]
+yr2007 = pd.read_excel(xls, years[0])
+yr2008 = pd.read_excel(xls, years[1])
+yr2009 = pd.read_excel(xls, years[2])
+yr2010 = pd.read_excel(xls, years[3])
+yr2011 = pd.read_excel(xls, years[4])
+yr2012 = pd.read_excel(xls, years[5])
+yr2013 = pd.read_excel(xls, years[6])
+yr2014 = pd.read_excel(xls, years[7])
+yr2015 = pd.read_excel(xls, years[8])
+yr2016 = pd.read_excel(xls, years[9])
+yr2017 = pd.read_excel(xls, years[10])
+yr2018 = pd.read_excel(xls, years[11])
+yr2019 = pd.read_excel(xls, years[12])
+yr2020 = pd.read_excel(xls, years[13])
+yr2021 = pd.read_excel(xls, years[14])
+</code></pre>
+
+When the data is first loaded in, it is very messy. Here is the data cleaning. I added a year column and changed the structure of the data so that the varibales are not all their own column but rather in a row as a description. 
+
+<pre><code>
+#adding the year column
+for i in range(len(sheets)):
+    sheets[i].insert(0, "Year", years[i])	
+
+#concatinating the data
+oregonstacked = yr2007[(yr2007['CoC Number'] > 'OR-000') & (yr2007['CoC Number'] < 'PA')]
+for i in range(1, len(sheets)):
+    oregonstacked = pd.concat([oregonstacked, sheets[i][(sheets[i]['CoC Number'] > 'OR-000') & (sheets[i]['CoC Number'] < 'PA')]])
+    
+# simplifing the dataset to not include ES or TH shelterd home 
+oregoncut = oregonstacked
+for column in oregoncut.columns:
+    if "ES" in column or 'TH' in column:
+        oregonstacked = oregonstacked.drop(column, axis = 1)
+
+OR = oregonstacked
+
+# DO NOT RUN THIS PART MULTIPLE TIMES
+# (If you do, rerun the previous chunk of code)
+
+# Creates the new index for the data 
+OR.set_index(["CoC Name", "CoC Number","Year"], inplace= True)
+# Changes all other collumns to rows besides the index
+OR = OR.stack().reset_index()
+# changes the new column names to be useful desctiptors 
+OR.columns= ["CoC Name", "CoC Number", "Year", "Description","Count"]
+# Gets rid of the last 6 characters in the Desription column so that Descriptions can be compared easily through the years
+OR['Description'] = OR["Description"].map(lambda x: str(x)[:-6])    
+
+# A few rows in 2021 data are giving description in Count column 
+# Here we find those rows and take them out of the dataframe 
+OR.loc[OR['Description'] == "CoC Ca"]
+OR = OR.drop([15443,15606,15769,15932,16095,16258,16421,16584])
+OR.loc[OR['Description'] == "Sheltered and full unsheltered"]
+OR = OR.drop([15444,15770,16422,16585])
+OR.loc[OR['Count'] == "Sheltered-Only Count"]
+OR = OR.drop([15607,16096,16259])
+OR.loc[OR['Count'] == "Sheltered and partial unsheltered"]
+OR = OR.drop([15933])
+
+# Coverting dtypes to make better graphics 
+OR["Count"] = OR["Count"].astype("str").astype("float")
+OR["Year"] = pd.to_datetime(OR["Year"], format = "%Y")
+</code></pre>
+
+Here is how the head of the data changed after cleaning. 
+
+<center>
+<img src=".png" height=400px>
+<img src=".png" height=400px>
+
+</center>
+
