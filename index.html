@@ -159,19 +159,17 @@ OR["Count"] = OR["Count"].astype("str").astype("float")
 OR["Year"] = pd.to_datetime(OR["Year"], format = "%Y")
 </code></pre>
 
-Here is how the head of the data changed after cleaning. 
+Here is the head of the data after cleaning. I would have a
 
 <center>
-<img src=".png" height=400px>
-<img src=".png" height=400px>
-
+<img src="df2.png" height=300px>
+<img src="df1.png" height=300px>
 </center>
 
 <h2 >The Visualizaiton</h2>	
 
 There are thousands more way to look at homelessness data but here are a few that I found intersting. 
-<pre><code>
-import plotly.express as px
+<pre><code>import plotly.express as px
 
 # Filters data for variable we want 
 OVH = OR[OR["Description"]=="Overall Homeless"]
@@ -184,15 +182,13 @@ fig.update_layout(
     font_color="#00bfb2",
     title_font_color="#00bfb2",
     legend_title_font_color="#00bfb2")
-fig.show()
-</code></pre>
+fig.show()</code></pre>
 
 <center>
-<img src=".png" height=400px>
+<img src="Overallhomeless.png.png" height=400px>
 </center>
 
-<pre><code>
-# Filtering for Overall homelessness in Oregon by Gender 
+<pre><code># Filtering for Overall homelessness in Oregon by Gender 
 FMG = OR[(OR["Description"]=="Overall Homeless - Female") | (OR["Description"]=="Overall Homeless - Male")
         |(OR["Description"]=="Overall Homeless - Gender Non-Conforming")]
 FMG= FMG.groupby(by=["Description", "Year"], group_keys=True, as_index=False)["Count"].sum()
@@ -205,11 +201,10 @@ fig.update_layout(
     font_color="#00bfb2",
     title_font_color="#00bfb2",
     legend_title_font_color="#00bfb2")
-fig.show()
-</code></pre>
+fig.show()</code></pre>
 
 <center>
-<img src=".png" height=400px>
+<img src="HomelessbyGender.png" height=400px>
 </center>
 
 <h2 >To Vinny</h2>	
