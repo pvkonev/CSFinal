@@ -128,9 +128,6 @@ for column in oregoncut.columns:
 
 OR = oregonstacked
 
-# DO NOT RUN THIS PART MULTIPLE TIMES
-# (If you do, rerun the previous chunk of code)
-
 # Creates the new index for the data 
 OR.set_index(["CoC Name", "CoC Number","Year"], inplace= True)
 # Changes all other collumns to rows besides the index
